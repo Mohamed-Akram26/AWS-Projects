@@ -45,13 +45,13 @@ This project demonstrates a **production-style web application infrastructure on
 ---
 
 ## 🔁 End-to-End Flow
-- User → ALB → Private EC2 (via Target Group)
-- ↓
-- ASG maintains instances
-- ↓
-- NAT GW provides outbound access
-- ↓
-- Jumphost provides admin access
+ User → ALB → Private EC2 (via Target Group)
+ ↓
+ ASG maintains instances
+ ↓
+ NAT GW provides outbound access
+ ↓
+ Jumphost provides admin access
 
 ---
 
