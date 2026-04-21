@@ -3,7 +3,7 @@
 ---
 
 ### 🌐 VPC — `akram-vpc`
-- **CIDR `10.0.0.0/16`** — gives 65K IPs, enough room to carve out multiple subnets
+- **CIDR `10.0.0.0/16`**
 - **DNS hostnames + DNS support enabled** — so EC2 instances can talk to each other using DNS names
 
 ![VPC Created](Artifacts/01.-VPC-Created-with-DNS-Hostnames-Enabled.jpg.png)
@@ -21,7 +21,6 @@
 
 ### 🌍 Internet Gateway — `akram-igw`
 - **Attached to `akram-vpc`** — enables the VPC to communicate with the internet
-- Without this, even public subnets can't reach the internet
 
 ![Internet Gateway](Artifacts/03.-Internet-Gateway-Created-and-Attached-to-VPC.jpg.png)
 
@@ -50,11 +49,10 @@
 ### 🔀 NAT Gateways — `akram-nat-gw-1` & `akram-nat-gw-2`
 - **Placed in public subnets** — needs internet access itself to forward traffic
 - **`nat-gw-1` in public-subnet-1, `nat-gw-2` in public-subnet-2** — one per AZ for HA
-- **Only `nat-gw-1` used in private route table** — acceptable for lab; production would have separate private RT per AZ each pointing to its own NAT GW
 
 ![NAT Gateway 1](Artifacts/06.-NAT-Gateway-1-Available-in-Public-Subnet-1.jpg)
 
-![NAT Gateway 2](Artifacts/07.-NAT-Gateway-2-Available-in-Public-Subnet-2.jpg)
+![NAT Gateway 2](Artifacts/07.-NAT-Gateway-2-Available-in-Public-Subnet-2.jpg.png)
 
 ---
 
@@ -85,7 +83,7 @@
 
 ### 🔑 Key Pair — `akram-key`
 - **RSA, `.pem` format** — used to SSH into all EC2 instances
-- Same key used for Jumphost and private servers — copied `.pem` to Jumphost for server hopping
+- Same key used for Jumphost and private servers
 
 ![Key Pair](Artifacts/12.-Key-Pair-Created-akram-key.jpg.png)
 
@@ -94,13 +92,11 @@
 ### 🖥️ EC2 — `akram-jumphost`
 - **In `akram-public-subnet-1` with public IP** — accessible from internet via SSH
 - **Purpose:** acts as a gateway to SSH into private servers that have no public IP
-- Assigned `akram-jumphost-sg`
+- Assigned with `akram-jumphost-sg`
 
 ![Jumphost EC2](Artifacts/13.-EC2-Jumphost-Running-in-Public-Subnet-1.jpg.png)
 
 ![SCP Key to Jumphost](Artifacts/16.-SCP-Key-Transferred-to-Jumphost.jpg)
-
-![SSH to Jumphost](Artifacts/16.-SSH-From-Local-to-Jumphost-Using-Key.jpg)
 
 ---
 
