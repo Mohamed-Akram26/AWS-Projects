@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 VPC — `akram-vpc`
+### VPC — `akram-vpc`
 - **CIDR `10.0.0.0/16`**
 - **DNS hostnames + DNS support enabled** — so EC2 instances can talk to each other using DNS names
 
@@ -10,7 +10,7 @@
 
 ---
 
-### 🔲 Subnets
+### Subnets
 - **4 subnets across 2 AZs** — for high availability
 - **Public subnets (`10.0.1.0/24`, `10.0.2.0/24`)** — for resources that need internet access (Jumphost, NAT GW, ALB)
 - **Private subnets (`10.0.3.0/24`, `10.0.4.0/24`)** — for app servers, no direct internet exposure
@@ -19,14 +19,14 @@
 
 ---
 
-### 🌍 Internet Gateway — `akram-igw`
+### Internet Gateway — `akram-igw`
 - **Attached to `akram-vpc`** — enables the VPC to communicate with the internet
 
 ![Internet Gateway](Artifacts/03.-Internet-Gateway-Created-and-Attached-to-VPC.jpg.png)
 
 ---
 
-### 🗺️ Public Route Table — `akram-public-rt`
+### Public Route Table — `akram-public-rt`
 - **`0.0.0.0/0` → `akram-igw`** — any traffic going outside VPC routes through the Internet Gateway
 - **`10.0.0.0/16` → local** — internal VPC traffic stays within VPC
 - **Associated to both public subnets** — so Jumphost and NAT GW get internet access
@@ -35,7 +35,7 @@
 
 ---
 
-### 🗺️ Private Route Table — `akram-private-rt`
+### Private Route Table — `akram-private-rt`
 - **`0.0.0.0/0` → `akram-nat-gw-1`** — outbound internet traffic from private servers routes through NAT Gateway
 - **`10.0.0.0/16` → local** — internal traffic stays within VPC
 - **Associated to both private subnets** — private EC2s can reach internet (for updates etc.) but internet can't reach them directly
@@ -46,7 +46,7 @@
 
 ---
 
-### 🔀 NAT Gateways — `akram-nat-gw-1` & `akram-nat-gw-2`
+### NAT Gateways — `akram-nat-gw-1` & `akram-nat-gw-2`
 - **Placed in public subnets** — needs internet access itself to forward traffic
 - **`nat-gw-1` in public-subnet-1, `nat-gw-2` in public-subnet-2** — one per AZ for HA
 
@@ -56,7 +56,7 @@
 
 ---
 
-### 🛡️ Security Group — `akram-alb-sg`
+### Security Group — `akram-alb-sg`
 - **Inbound: HTTP port 80 from `0.0.0.0/0`** — allows anyone on internet to hit the ALB
 - ALB is the only entry point to the application from outside
 
@@ -64,7 +64,7 @@
 
 ---
 
-### 🛡️ Security Group — `akram-ec2-sg`
+### Security Group — `akram-ec2-sg`
 - **Inbound: port 8000 from `akram-alb-sg`** — only ALB can send traffic to EC2 servers, nobody else
 - **Inbound: port 22 from `akram-jumphost-sg`** — only Jumphost can SSH into private servers
 - Follows **least privilege principle** — no unnecessary open ports
@@ -73,7 +73,7 @@
 
 ---
 
-### 🛡️ Security Group — `akram-jumphost-sg`
+### Security Group — `akram-jumphost-sg`
 - **Inbound: port 22 from My IP** — only your machine can SSH into the Jumphost
 - Acts as the single controlled entry point for admin access
 
@@ -81,7 +81,7 @@
 
 ---
 
-### 🔑 Key Pair — `akram-key`
+### Key Pair — `akram-key`
 - **RSA, `.pem` format** — used to SSH into all EC2 instances
 - Same key used for Jumphost and private servers
 
@@ -89,7 +89,7 @@
 
 ---
 
-### 🖥️ EC2 — `akram-jumphost`
+### EC2 — `akram-jumphost`
 - **In `akram-public-subnet-1` with public IP** — accessible from internet via SSH
 - **Purpose:** acts as a gateway to SSH into private servers that have no public IP
 - Assigned with `akram-jumphost-sg`
@@ -100,7 +100,7 @@
 
 ---
 
-### 🖥️ EC2 — `akram-server-1` & `akram-server-2`
+### EC2 — `akram-server-1` & `akram-server-2`
 - **In private subnets, no public IP** — not directly accessible from internet
 - **Python HTTP server running on port 8000** — serving custom HTML identifying each server
 - Assigned `akram-ec2-sg`
@@ -119,7 +119,7 @@
 
 ---
 
-### 🎯 Target Group — `akram-tg`
+### Target Group — `akram-tg`
 - **Protocol HTTP, port 8000** — matches the port Python server is running on
 - **Health check on `/`** — ALB pings this path to confirm server is alive before sending traffic
 - **Both servers registered** — ALB uses this list to know where to forward requests
@@ -128,7 +128,7 @@
 
 ---
 
-### ⚖️ Application Load Balancer — `akram-alb`
+### Application Load Balancer — `akram-alb`
 - **Internet-facing** — has a public DNS, accessible from browser/curl
 - **Spans both public subnets** — sits in AZ1 and AZ2 for HA
 - **Listener on port 80** — forwards incoming HTTP traffic to `akram-tg`
@@ -145,7 +145,7 @@
 
 ---
 
-### 📋 Launch Template — `akram-lt`
+### Launch Template — `akram-lt`
 - **AMI: Ubuntu 24.04, type: t2.micro, key: `akram-key`, SG: `akram-ec2-sg`** — defines the blueprint for ASG to launch instances
 - **User data script** — automatically installs Python, creates `index.html` with server's hostname/IP, starts Python HTTP server on port 8000 on every new instance launch
 - Any new instance ASG creates is **production-ready automatically** without manual SSH
@@ -154,7 +154,7 @@
 
 ---
 
-### 📈 Auto Scaling Group — `akram-asg`
+### Auto Scaling Group — `akram-asg`
 - **Uses `akram-lt`** — so every instance it creates follows the same config
 - **Subnets: both private subnets** — launches instances across 2 AZs for HA
 - **Desired: 2, Min: 1, Max: 3** — maintains 2 running instances, can scale up to 3 under load, never goes below 1
