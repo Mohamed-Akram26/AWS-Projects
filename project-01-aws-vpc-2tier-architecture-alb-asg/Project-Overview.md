@@ -1,12 +1,12 @@
 # AWS VPC 2-Tier Architecture with ALB & Auto Scaling
 
-## 🚀 Overview
+## Overview
 
 This project demonstrates a **production-style web application infrastructure on AWS** where the application is secure, highly available, and auto-scalable.
 
 ---
 
-## 🏗️ Architecture Summary
+## Architecture Summary
 
 - Application servers are deployed in **private subnets** with **no public IPs**
 - Direct internet access to servers is **blocked**
@@ -14,7 +14,7 @@ This project demonstrates a **production-style web application infrastructure on
 
 ---
 
-## 🌐 Traffic Flow
+## Traffic Flow
 
 - Users send HTTP requests to the **ALB (Port 80)**
 - ALB distributes traffic across servers using **round-robin**
@@ -22,21 +22,21 @@ This project demonstrates a **production-style web application infrastructure on
 
 ---
 
-## 🔒 Security Design
+## Security Design
 
 - Private EC2 instances are not publicly accessible
 - **Jumphost (Bastion Host)** is the only entry point for SSH
 
 ---
 
-## 🌍 Internet Access for Private Servers
+## Internet Access for Private Servers
 
 - Private servers do not have direct internet access
 - **NAT Gateways** are used for outbound traffic
 
 ---
 
-## ⚙️ High Availability & Auto Scaling
+## High Availability & Auto Scaling
 
 - **Auto Scaling Group (ASG)** ensures availability
 - Automatically replaces unhealthy instances
@@ -44,12 +44,12 @@ This project demonstrates a **production-style web application infrastructure on
 
 ---
 
-## 🔁 End-to-End Flow
+## End-to-End Flow
 - User → ALB → Private EC2 (via Target Group) → ASG maintains instances → NAT GW provides outbound access → Jumphost provides admin access
 
 ---
 
-## ✅ Key Features
+## Key Features
 
 - Multi-AZ deployment
 - Private subnet isolation
